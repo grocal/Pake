@@ -192,6 +192,8 @@ jobs:
             $args += "--hide-title-bar"
           }
 
+          $args += "--force-internal-navigation"
+
           Write-Host "Running: node dist/cli.js $($args -join ' ')"
           node dist/cli.js $args
 
