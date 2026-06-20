@@ -10,16 +10,25 @@
 // event.js re-assigning window.open, regardless of injection order.
 (function () {
   function toAbs(u) {
-    try { return new URL(u, location.href).href; } catch (e) { return null; }
+    try {
+      return new URL(u, location.href).href;
+    } catch (e) {
+      return null;
+    }
   }
   function isSlack(u) {
     var h;
-    try { h = new URL(u, location.href).hostname; } catch (e) { return false; }
-    return h === 'slack.com' || (h && h.slice(-10) === '.slack.com');
+    try {
+      h = new URL(u, location.href).hostname;
+    } catch (e) {
+      return false;
+    }
+    return h === "slack.com" || (h && h.slice(-10) === ".slack.com");
   }
 
   // Whatever window.open is at any moment (native, or Pake's event.js wrapper).
-  var current = (typeof window.open === 'function') ? window.open.bind(window) : null;
+  var current =
+    typeof window.open === "function" ? window.open.bind(window) : null;
 
   function pakeOpen(url, target, features) {
     try {
@@ -27,16 +36,20 @@
         window.location.assign(toAbs(url));
         return window; // truthy stub so callers don't crash on null
       }
-    } catch (e) { /* fall through to default */ }
+    } catch (e) {
+      /* fall through to default */
+    }
     return current ? current(url, target, features) : null;
   }
 
   try {
-    Object.defineProperty(window, 'open', {
+    Object.defineProperty(window, "open", {
       configurable: true,
-      get: function () { return pakeOpen; },
+      get: function () {
+        return pakeOpen;
+      },
       set: function (fn) {
-        if (typeof fn === 'function') {
+        if (typeof fn === "function") {
           current = fn.bind(window);
         }
       },
